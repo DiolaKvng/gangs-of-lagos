@@ -26,7 +26,6 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        /* Top Status HUD */
         .hud {
             background-color: #0c0c0e;
             border-bottom: 1px solid var(--border);
@@ -53,8 +52,6 @@
         }
         .stat-heat-alert { border-color: var(--red); color: var(--red); animation: pulse 1.5s infinite; }
         .stat-cash { border-color: var(--green); color: var(--green); }
-
-        /* Main App Area */
         .content {
             flex: 1;
             padding: 16px;
@@ -65,12 +62,8 @@
             box-sizing: border-box;
             padding-bottom: 80px;
         }
-
-        /* Screen Screens */
         .screen { display: none; }
         .screen.active { display: block; }
-
-        /* Visual Cards & Modules */
         .card {
             background-color: var(--panel-bg);
             border: 1px solid var(--border);
@@ -79,10 +72,8 @@
             margin-bottom: 16px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
         }
-        .card-title { font-size: 12px; font-weight: 800; color: #a1a1aa; tracking-wider: 1px; uppercase; margin-bottom: 6px; }
+        .card-title { font-size: 12px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; margin-bottom: 6px; }
         .card-value { font-size: 20px; font-weight: 900; margin: 2px 0 8px 0; }
-
-        /* Buttons & Inputs */
         .btn {
             background-color: var(--yellow);
             color: #000000;
@@ -105,8 +96,6 @@
         .btn:active { transform: scale(0.98); }
         .btn-danger { background-color: var(--red); color: white; }
         .btn-secondary { background-color: #27272a; color: white; border: 1px solid #3f3f46; }
-
-        /* Floating Bottom Tab Bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -114,7 +103,7 @@
             right: 0;
             height: 60px;
             background-color: #0c0c0e;
-            border-t: 1px solid var(--border);
+            border-top: 1px solid var(--border);
             display: grid;
             grid-template-cols: repeat(4, 1fr);
             z-index: 100;
@@ -131,7 +120,6 @@
         }
         .nav-item.active { color: var(--yellow); }
         .nav-icon { font-size: 18px; margin-bottom: 2px; }
-
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
     </style>
 </head>
@@ -154,16 +142,16 @@
                 <h1 style="color: var(--yellow); font-weight: 900; margin-bottom: 4px;">GANGS OF LAGOS</h1>
                 <p style="margin-bottom: 24px;">Pick your starting background to enter the trenches.</p>
                 
-                <div style="text-align: left; space-y-4">
+                <div style="text-align: left;">
                     <button class="btn" onclick="initializeProfile('LAPO')">
                         <span>🩸 Lapo Route (Street Hustler)</span>
-                        <span style="font-size: 11px; opacity: 0.8;">₦50k Base • Low Rep</span>
+                        <span style="font-size: 11px; opacity: 0.8;">₦50k Base</span>
                     </button>
                     <p style="font-size: 11px; color: #a1a1aa; padding-left: 8px; margin-bottom: 16px;">Start from the bottom with micro-loans. High risk, extreme street credibility scaling multipliers.</p>
 
                     <button class="btn btn-secondary" onclick="initializeProfile('NEPO')">
                         <span>💎 Nepo Baby (Island Elite)</span>
-                        <span style="font-size: 11px; opacity: 0.8;">₦5M Base • 0 Rep</span>
+                        <span style="font-size: 11px; opacity: 0.8;">₦5M Base</span>
                     </button>
                     <p style="font-size: 11px; color: #a1a1aa; padding-left: 8px;">Start with heavy financing but massive public exposure. Cops notice operations much faster.</p>
                 </div>
@@ -182,7 +170,7 @@
                 <div class="card-title">AVAILABLE HUSTLES</div>
                 <button class="btn" onclick="executeHustle('extort')">
                     <span>💵 Extort Market Vendors</span>
-                    <span id="payout-extort">+₦75,000</span>
+                    <span>+₦75,000</span>
                 </button>
                 <button class="btn btn-danger" onclick="executeHustle('smuggle')">
                     <span>🌉 Third Mainland Bridge Run</span>
@@ -218,7 +206,7 @@
                 <div class="card-title">🏝️ LEKKI & IKOYI CLEANING HUB</div>
                 <p style="font-size: 12px; color: #a1a1aa; margin-bottom: 12px;">Convert your raw dirty street cash into legitimate real estate or VVIP nightclub assets to lower your Heat points permanently.</p>
                 
-                <div class="card-value" style="color: var(--green);" id="clean-cash-box">₦0 Clean</div>
+                <div class="card-value" style="color: var(--green);" id="clean-cash-box">₦0 Cleaned</div>
                 
                 <button class="btn" onclick="launderMoney()">
                     <span>🏢 Invest in Ibeju Real Estate</span>
@@ -240,3 +228,101 @@
         <div class="nav-item" onclick="switchTab('island', this)">
             <span class="nav-icon">🏝️</span><span>Island</span>
         </div>
+        <div class="nav-item" onclick="alert('Leaderboard server processing real-time scores...')">
+            <span class="nav-icon">👑</span><span>Rankings</span>
+        </div>
+    </nav>
+
+    <!-- YOUR CORE LOGIC ENGINE STARTS HERE -->
+    <script>
+        let gameState = {
+            profileType: "",
+            cash: 0,
+cleanCash: 0,
+heat: 0,
+streetCred: 10,
+assets: []
+};
+function initializeProfile(type) {
+gameState.profileType = type;
+gameState.cash = type === 'NEPO' ? 5000000 : 50000;
+gameState.cleanCash = 0;
+gameState.heat = type === 'NEPO' ? 30 : 0;
+gameState.streetCred = type === 'NEPO' ? 0 : 25;
+document.getElementById('screen-onboarding').classList.remove('active');
+document.getElementById('main-hud').style.display = 'flex';
+document.getElementById('main-nav').style.display = 'grid';
+document.getElementById('screen-mainland').classList.add('active');
+updateHUDMetrics();
+}
+function updateHUDMetrics() {
+document.getElementById('hud-cash').innerText = "₦" + gameState.cash.toLocaleString();
+document.getElementById('hud-heat').innerText = "⚠️ " + gameState.heat + "%";
+document.getElementById('clean-cash-box').innerText = "₦" + gameState.cleanCash.toLocaleString() + " Cleaned";
+const assetBox = document.getElementById('asset-list-box');
+if(gameState.assets.length > 0) {
+assetBox.innerHTML = gameState.assets.map(item => ✅ ${item}).join('
+');
+}
+}
+function switchTab(screenId, element) {
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+document.getElementById('screen-' + screenId).classList.add('active');
+document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+element.classList.add('active');
+}
+async function executeHustle(type) {
+if (type === 'extort') {
+gameState.cash += 75000;
+gameState.heat = Math.min(100, gameState.heat + 2);
+alert("Tax collection complete! You taxed local market shops for ₦75,000 (+2% Heat).");
+updateHUDMetrics();
+} else if (type === 'smuggle') {
+const statusPanel = document.getElementById('current-zone-text');
+statusPanel.innerText = "🚨 Crossing bridge... checking local police logs...";
+try {
+const res = await fetch('/api/smuggle', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ playerId: '1' })
+});
+const data = await res.json();
+if(data.success) {
+gameState.cash += 1200000;
+gameState.heat = Math.min(100, gameState.heat + 10);
+alert(data.message);
+} else {
+gameState.cash = Math.max(0, gameState.cash - 300000);
+gameState.heat = Math.min(100, gameState.heat + 20);
+alert(data.message + " You paid ₦300,000 in emergency bail handouts.");
+}
+} catch(err) {
+gameState.cash += 1200000;
+alert("Success! You slipped past the roadblock cargo terminal.");
+}
+statusPanel.innerText = "Mushin Under-The-Bridge";
+updateHUDMetrics();
+}
+}
+function buyItem(itemId, cost) {
+if (gameState.cash < cost) {
+alert("Baga! You don't have enough street cash to complete this armory deal.");
+return;
+}
+gameState.cash -= cost;
+const itemName = itemId === 'ak47' ? "AK-47 Weaponry Crate" : "Armored Tinted SUV";
+gameState.assets.push(itemName);
+alert(Deal closed. You unlocked a ${itemName} asset tag.);
+updateHUDMetrics();
+}
+function launderMoney() {
+if (gameState.cash < 1000000) {
+alert("You need at least ₦1,000,000 dirty cash to clear banking documentation thresholds.");
+return;
+}
+gameState.cash -= 1000000;
+gameState.cleanCash += 850000;
+gameState.heat = Math.max(0, gameState.heat - 15);
+alert("Money clean! Real estate contract filed. (-15% processing fee, -15% Police Eye Heat).");
+updateHUDMetrics();
+}
