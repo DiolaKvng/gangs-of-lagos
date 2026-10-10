@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>GANGS OF LAGOS</title>
+    <style>
+        body { background-color: #09090b; color: #ffffff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        h1 { color: #eab308; letter-spacing: 2px; margin-bottom: 5px; font-weight: 900; }
+        p { color: #a1a1aa; margin-top: 0; font-size: 14px; }
+        .panel { background-color: #18181b; border: 1px solid #27272a; padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; text-align: center; margin: 20px 0; box-sizing: border-box; font-weight: bold; }
+        .btn { background-color: #eab308; color: #000000; border: none; padding: 15px 24px; font-weight: 900; border-radius: 6px; cursor: pointer; width: 100%; max-width: 400px; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <h1>GANGS OF LAGOS</h1>
+    <p>📍 Mainland Zone (Live Alpha Universe)</p>
+    
+    <div class="panel" id="status-panel">Ready to hustle the streets...</div>
+
+    <button class="btn" onclick="runSmuggle()">⚡ Run Cargo (Third Mainland Bridge)</button>
+
+    <script>
+        async function runSmuggle() {
+            const panel = document.getElementById('status-panel');
+            panel.innerText = "Crossing the bridge... watch out for Task Force!";
+            try {
+                const res = await fetch('/api/smuggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerId: '1' })
+                });
+                const data = await res.json();
+                panel.innerText = data.message;
+            } catch (err) {
+                panel.innerText = "Network failure! Local agberos hijacked your mobile data connection.";
+            }
+        }
+    </script>
+</body>
+</html>

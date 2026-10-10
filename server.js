@@ -12,9 +12,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 );
 
-app.get('/', (req, res) => {
-  res.send('Gangs of Lagos Game Server Running Securely!');
-});
+app.use(express.static(__dirname));
 
 // Smuggling checkpoint resolution endpoint
 app.post('/api/smuggle', async (req, res) => {
