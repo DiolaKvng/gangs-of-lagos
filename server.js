@@ -33,3 +33,48 @@ app.post('/api/smuggle', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server blasting live on port ${PORT}`));
+app.post('/api/extort', async (req, res) => {
+  const { playerId } = req.body;
+  try {
+    const roll = Math.random();
+    // Area boy tax challenge loop
+    if (roll > 0.30) {
+      res.json({ 
+        success: true, 
+        payout: 75000, 
+        credGain: 5,
+        message: "Oshodi run clean! You collected ₦75,000 protection tax from local transit parks." 
+      });
+    } else {
+      res.json({ 
+        success: false, 
+        message: "Agberos blocked the path! You dropped your phone and wallet trying to scale a highway fence." 
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+app.post('/api/heist', async (req, res) => {
+  const { playerId } = req.body;
+  try {
+    const roll = Math.random();
+    // High-heat island operational loop
+    if (roll > 0.55) {
+      res.json({ 
+        success: true, 
+        payout: 3500000, 
+        heatGain: 15,
+        message: "Heist successful! Your hackers bypassed the security protocol on the Lekki yacht party." 
+      });
+    } else {
+      res.json({ 
+        success: false, 
+        heatGain: 25,
+        message: "Alarms triggered! The naval task force cornered your speedboats. You escaped, but your operational heat is burning." 
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
