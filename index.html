@@ -244,16 +244,21 @@ streetCred: 10,
 assets: []
 };
 function initializeProfile(type) {
-gameState.profileType = type;
-gameState.cash = type === 'NEPO' ? 5000000 : 50000;
-gameState.cleanCash = 0;
-gameState.heat = type === 'NEPO' ? 30 : 0;
-gameState.streetCred = type === 'NEPO' ? 0 : 25;
-document.getElementById('screen-onboarding').classList.remove('active');
-document.getElementById('main-hud').style.display = 'flex';
-document.getElementById('main-nav').style.display = 'grid';
-document.getElementById('screen-mainland').classList.add('active');
-updateHUDMetrics();
+    console.log("Profile clicked:", type); // This checks if the click works
+    gameState.profileType = type;
+    gameState.cash = type === 'NEPO' ? 5000000 : 50000;
+    gameState.cleanCash = 0;
+    gameState.heat = type === 'NEPO' ? 30 : 0;
+    gameState.streetCred = type === 'NEPO' ? 0 : 25;
+
+    // Force UI to show immediately without waiting for server responses
+    document.getElementById('screen-onboarding').style.display = 'none';
+    document.getElementById('main-hud').style.display = 'flex';
+    document.getElementById('main-nav').style.display = 'grid';
+    document.getElementById('screen-mainland').style.display = 'block';
+    document.getElementById('screen-mainland').classList.add('active');
+    
+    updateHUDMetrics();
 }
 function updateHUDMetrics() {
 document.getElementById('hud-cash').innerText = "₦" + gameState.cash.toLocaleString();
