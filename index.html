@@ -5,38 +5,238 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>GANGS OF LAGOS</title>
     <style>
-        body { background-color: #09090b; color: #ffffff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        h1 { color: #eab308; letter-spacing: 2px; margin-bottom: 5px; font-weight: 900; }
-        p { color: #a1a1aa; margin-top: 0; font-size: 14px; }
-        .panel { background-color: #18181b; border: 1px solid #27272a; padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; text-align: center; margin: 20px 0; box-sizing: border-box; font-weight: bold; }
-        .btn { background-color: #eab308; color: #000000; border: none; padding: 15px 24px; font-weight: 900; border-radius: 6px; cursor: pointer; width: 100%; max-width: 400px; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
+        :root {
+            --bg-dark: #09090b;
+            --panel-bg: #18181b;
+            --border: #27272a;
+            --yellow: #eab308;
+            --red: #ef4444;
+            --green: #22c55e;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Top Status HUD */
+        .hud {
+            background-color: #0c0c0e;
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .hud-logo { font-weight: 900; letter-spacing: 1px; color: var(--yellow); font-size: 14px; }
+        .stats-row { display: flex; gap: 8px; }
+        .stat-badge {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stat-heat-alert { border-color: var(--red); color: var(--red); animation: pulse 1.5s infinite; }
+        .stat-cash { border-color: var(--green); color: var(--green); }
+
+        /* Main App Area */
+        .content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
+            padding-bottom: 80px;
+        }
+
+        /* Screen Screens */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* Visual Cards & Modules */
+        .card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+        .card-title { font-size: 12px; font-weight: 800; color: #a1a1aa; tracking-wider: 1px; uppercase; margin-bottom: 6px; }
+        .card-value { font-size: 20px; font-weight: 900; margin: 2px 0 8px 0; }
+
+        /* Buttons & Inputs */
+        .btn {
+            background-color: var(--yellow);
+            color: #000000;
+            border: none;
+            padding: 14px 16px;
+            font-weight: 900;
+            font-size: 14px;
+            border-radius: 6px;
+            width: 100%;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            transition: transform 0.1s;
+        }
         .btn:active { transform: scale(0.98); }
+        .btn-danger { background-color: var(--red); color: white; }
+        .btn-secondary { background-color: #27272a; color: white; border: 1px solid #3f3f46; }
+
+        /* Floating Bottom Tab Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #0c0c0e;
+            border-t: 1px solid var(--border);
+            display: grid;
+            grid-template-cols: repeat(4, 1fr);
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #71717a;
+            cursor: pointer;
+        }
+        .nav-item.active { color: var(--yellow); }
+        .nav-icon { font-size: 18px; margin-bottom: 2px; }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
     </style>
 </head>
 <body>
-    <h1>GANGS OF LAGOS</h1>
-    <p>📍 Mainland Zone (Live Alpha Universe)</p>
-    
-    <div class="panel" id="status-panel">Ready to hustle the streets...</div>
 
-    <button class="btn" onclick="runSmuggle()">⚡ Run Cargo (Third Mainland Bridge)</button>
+    <!-- Upper Stats HUD -->
+    <header class="hud" id="main-hud" style="display: none;">
+        <div class="hud-logo">GANGS OF LAGOS</div>
+        <div class="stats-row">
+            <div class="stat-badge stat-heat-alert" id="hud-heat">⚠️ 0%</div>
+            <div class="stat-badge stat-cash" id="hud-cash">₦500,000</div>
+        </div>
+    </header>
 
-    <script>
-        async function runSmuggle() {
-            const panel = document.getElementById('status-panel');
-            panel.innerText = "Crossing the bridge... watch out for Task Force!";
-            try {
-                const res = await fetch('/api/smuggle', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerId: '1' })
-                });
-                const data = await res.json();
-                panel.innerText = data.message;
-            } catch (err) {
-                panel.innerText = "Network failure! Local agberos hijacked your mobile data connection.";
-            }
-        }
-    </script>
-</body>
-</html>
+    <div class="content">
+
+        <!-- SCREEN 1: ONBOARDING PROFILE SELECTION -->
+        <section class="screen active" id="screen-onboarding">
+            <div class="card" style="text-align: center; margin-top: 20px;">
+                <h1 style="color: var(--yellow); font-weight: 900; margin-bottom: 4px;">GANGS OF LAGOS</h1>
+                <p style="margin-bottom: 24px;">Pick your starting background to enter the trenches.</p>
+                
+                <div style="text-align: left; space-y-4">
+                    <button class="btn" onclick="initializeProfile('LAPO')">
+                        <span>🩸 Lapo Route (Street Hustler)</span>
+                        <span style="font-size: 11px; opacity: 0.8;">₦50k Base • Low Rep</span>
+                    </button>
+                    <p style="font-size: 11px; color: #a1a1aa; padding-left: 8px; margin-bottom: 16px;">Start from the bottom with micro-loans. High risk, extreme street credibility scaling multipliers.</p>
+
+                    <button class="btn btn-secondary" onclick="initializeProfile('NEPO')">
+                        <span>💎 Nepo Baby (Island Elite)</span>
+                        <span style="font-size: 11px; opacity: 0.8;">₦5M Base • 0 Rep</span>
+                    </button>
+                    <p style="font-size: 11px; color: #a1a1aa; padding-left: 8px;">Start with heavy financing but massive public exposure. Cops notice operations much faster.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: MAINLAND GRIND / AREA OPERATIONS -->
+        <section class="screen" id="screen-mainland">
+            <div class="card">
+                <div class="card-title">📍 CURRENT LOCATION</div>
+                <div class="card-value" id="current-zone-text">Mushin Under-The-Bridge</div>
+                <p style="font-size: 12px; color: #a1a1aa;">Run street extortion operations to build capital or buy basic weapons cargo packages.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">AVAILABLE HUSTLES</div>
+                <button class="btn" onclick="executeHustle('extort')">
+                    <span>💵 Extort Market Vendors</span>
+                    <span id="payout-extort">+₦75,000</span>
+                </button>
+                <button class="btn btn-danger" onclick="executeHustle('smuggle')">
+                    <span>🌉 Third Mainland Bridge Run</span>
+                    <span>+₦1,200,000</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: BLACK MARKET STOREFRONT -->
+        <section class="screen" id="screen-market">
+            <div class="card">
+                <div class="card-title">🔫 UNDERGROUND ARMORY</div>
+                <p style="font-size: 12px; color: #a1a1aa; margin-bottom: 12px;">Equip your gang crew. Heavy gear increases combat survival margins during high-heat checkpoint failures.</p>
+                
+                <button class="btn btn-secondary" onclick="buyItem('ak47', 1200000)">
+                    <span>Crate of AK-47 Rifles</span>
+                    <span>₦1,200,000</span>
+                </button>
+                <button class="btn btn-secondary" onclick="buyItem('suv', 8500000)">
+                    <span>Armored Tinted SUV</span>
+                    <span>₦8,500,000</span>
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-title">🎒 CURRENT ASSET STORAGE</div>
+                <div id="asset-list-box" style="font-size: 13px; color: #e4e4e7; line-height: 1.6;">No military assets acquired yet.</div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: ISLAND EMPIRE / REVENUE LAUNDERING -->
+        <section class="screen" id="screen-island">
+            <div class="card">
+                <div class="card-title">🏝️ LEKKI & IKOYI CLEANING HUB</div>
+                <p style="font-size: 12px; color: #a1a1aa; margin-bottom: 12px;">Convert your raw dirty street cash into legitimate real estate or VVIP nightclub assets to lower your Heat points permanently.</p>
+                
+                <div class="card-value" style="color: var(--green);" id="clean-cash-box">₦0 Clean</div>
+                
+                <button class="btn" onclick="launderMoney()">
+                    <span>🏢 Invest in Ibeju Real Estate</span>
+                    <span>Clean ₦1M</span>
+                </button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Bottom App Navigation Tab Bar -->
+    <nav class="nav-bar" id="main-nav" style="display: none;">
+        <div class="nav-item active" onclick="switchTab('mainland', this)">
+            <span class="nav-icon">🏢</span><span>Mainland</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('market', this)">
+            <span class="nav-icon">🛍️</span><span>Armory</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('island', this)">
+            <span class="nav-icon">🏝️</span><span>Island</span>
+        </div>
