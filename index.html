@@ -2,80 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GANGS OF LAGOS</title>
     <style>
-        :root {
-            --bg-dark: #09090b;
-            --panel-bg: #18181b;
-            --border: #27272a;
-            --yellow: #eab308;
-            --red: #ef4444;
-            --green: #22c55e;
-        }
         body {
-            background-color: var(--bg-dark);
+            background-color: #09090b;
             color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
         .hud {
             background-color: #0c0c0e;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #27272a;
             padding: 12px 16px;
-            display: flex;
+            display: none;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
-        .hud-logo { font-weight: 900; letter-spacing: 1px; color: var(--yellow); font-size: 14px; }
-        .stats-row { display: flex; gap: 8px; }
+        .hud-logo { font-weight: 900; color: #eab308; font-size: 14px; }
         .stat-badge {
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
+            background: #18181b;
+            border: 1px solid #27272a;
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
-        .stat-heat-alert { border-color: var(--red); color: var(--red); animation: pulse 1.5s infinite; }
-        .stat-cash { border-color: var(--green); color: var(--green); }
         .content {
             flex: 1;
             padding: 16px;
-            overflow-y: auto;
             max-width: 500px;
             width: 100%;
             margin: 0 auto;
             box-sizing: border-box;
-            padding-bottom: 80px;
         }
         .screen { display: none; }
         .screen.active { display: block; }
         .card {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border);
+            background-color: #18181b;
+            border: 1px solid #27272a;
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
         }
         .card-title { font-size: 12px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; margin-bottom: 6px; }
         .card-value { font-size: 20px; font-weight: 900; margin: 2px 0 8px 0; }
         .btn {
-            background-color: var(--yellow);
+            background-color: #eab308;
             color: #000000;
             border: none;
             padding: 14px 16px;
@@ -85,16 +63,12 @@
             width: 100%;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-top: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
-            transition: transform 0.1s;
         }
-        .btn:active { transform: scale(0.98); }
-        .btn-danger { background-color: var(--red); color: white; }
         .btn-secondary { background-color: #27272a; color: white; border: 1px solid #3f3f46; }
         .nav-bar {
             position: fixed;
@@ -103,10 +77,9 @@
             right: 0;
             height: 60px;
             background-color: #0c0c0e;
-            border-top: 1px solid var(--border);
-            display: grid;
-            grid-template-cols: repeat(4, 1fr);
-            z-index: 100;
+            border-top: 1px solid #27272a;
+            display: none;
+            grid-template-cols: repeat(3, 1fr);
         }
         .nav-item {
             display: flex;
@@ -118,229 +91,196 @@
             color: #71717a;
             cursor: pointer;
         }
-        .nav-item.active { color: var(--yellow); }
-        .nav-icon { font-size: 18px; margin-bottom: 2px; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .nav-item.active { color: #eab308; }
     </style>
 </head>
 <body>
 
-    <!-- Upper Stats HUD -->
-    <header class="hud" id="main-hud" style="display: none;">
+    <!-- Stats HUD -->
+    <header class="hud" id="main-hud">
         <div class="hud-logo">GANGS OF LAGOS</div>
-        <div class="stats-row">
-            <div class="stat-badge stat-heat-alert" id="hud-heat">⚠️ 0%</div>
-            <div class="stat-badge stat-cash" id="hud-cash">₦500,000</div>
+        <div style="display: flex; gap: 8px;">
+            <div class="stat-badge" style="color: #ef4444;" id="hud-heat">⚠️ 0%</div>
+            <div class="stat-badge" style="color: #22c55e;" id="hud-cash">₦50,000</div>
         </div>
     </header>
 
     <div class="content">
 
-        <!-- SCREEN 1: ONBOARDING PROFILE SELECTION -->
+        <!-- SCREEN 1: PROFILE SELECTION -->
         <section class="screen active" id="screen-onboarding">
             <div class="card" style="text-align: center; margin-top: 20px;">
-                <h1 style="color: var(--yellow); font-weight: 900; margin-bottom: 4px;">GANGS OF LAGOS</h1>
-                <p style="margin-bottom: 24px;">Pick your starting background to enter the trenches.</p>
+                <h1 style="color: #eab308; font-weight: 900;">GANGS OF LAGOS</h1>
+                <p style="color: #a1a1aa;">Choose a profile to enter the game universe.</p>
                 
-                <div style="text-align: left;">
-                    <button class="btn" onclick="initializeProfile('LAPO')">
-                        <span>🩸 Lapo Route (Street Hustler)</span>
-                        <span style="font-size: 11px; opacity: 0.8;">₦50k Base</span>
-                    </button>
-                    <p style="font-size: 11px; color: #a1a1aa; padding-left: 8px; margin-bottom: 16px;">Start from the bottom with micro-loans. High risk, extreme street credibility scaling multipliers.</p>
-
-                    <button class="btn btn-secondary" onclick="initializeProfile('NEPO')">
-                        <span>💎 Nepo Baby (Island Elite)</span>
-                        <span style="font-size: 11px; opacity: 0.8;">₦5M Base</span>
-                    </button>
-                    <p style="font-size: 11px; color: #a1a1aa; padding-left: 8px;">Start with heavy financing but massive public exposure. Cops notice operations much faster.</p>
-                </div>
+                <button class="btn" onclick="startGame('LAPO')">
+                    <span>🩸 Lapo Route (Hustler)</span>
+                    <span>₦50k</span>
+                </button>
+                <button class="btn btn-secondary" onclick="startGame('NEPO')">
+                    <span>💎 Nepo Baby (Elite)</span>
+                    <span>₦5M</span>
+                </button>
             </div>
         </section>
 
-        <!-- SCREEN 2: MAINLAND GRIND / AREA OPERATIONS -->
+        <!-- SCREEN 2: MAINLAND GRIND -->
         <section class="screen" id="screen-mainland">
             <div class="card">
-                <div class="card-title">📍 CURRENT LOCATION</div>
-                <div class="card-value" id="current-zone-text">Mushin Under-The-Bridge</div>
-                <p style="font-size: 12px; color: #a1a1aa;">Run street extortion operations to build capital or buy basic weapons cargo packages.</p>
+                <div class="card-title">📍 Current Location</div>
+                <div class="card-value" id="loc-text">Mushin Trenches</div>
             </div>
-
             <div class="card">
-                <div class="card-title">AVAILABLE HUSTLES</div>
-                <button class="btn" onclick="executeHustle('extort')">
-                    <span>💵 Extort Market Vendors</span>
-                    <span>+₦75,000</span>
-                </button>
-                <button class="btn btn-danger" onclick="executeHustle('smuggle')">
-                    <span>🌉 Third Mainland Bridge Run</span>
-                    <span>+₦1,200,000</span>
-                </button>
+                <div class="card-title">Mainland Hustles</div>
+                <button class="btn" onclick="runHustle('extort')">💵 Tax Market Vendors (+₦75k)</button>
+                <button class="btn" onclick="runHustle('smuggle')">🌉 Run Third Mainland Bridge</button>
             </div>
         </section>
 
-        <!-- SCREEN 3: BLACK MARKET STOREFRONT -->
+        <!-- SCREEN 3: ARMORY -->
         <section class="screen" id="screen-market">
             <div class="card">
-                <div class="card-title">🔫 UNDERGROUND ARMORY</div>
-                <p style="font-size: 12px; color: #a1a1aa; margin-bottom: 12px;">Equip your gang crew. Heavy gear increases combat survival margins during high-heat checkpoint failures.</p>
-                
-                <button class="btn btn-secondary" onclick="buyItem('ak47', 1200000)">
-                    <span>Crate of AK-47 Rifles</span>
-                    <span>₦1,200,000</span>
-                </button>
-                <button class="btn btn-secondary" onclick="buyItem('suv', 8500000)">
-                    <span>Armored Tinted SUV</span>
-                    <span>₦8,500,000</span>
-                </button>
+                <div class="card-title">🔫 Black Market Armory</div>
+                <button class="btn btn-secondary" onclick="buyWeapon('AK-47')">Buy AK-47 Crate (₦1.2M)</button>
             </div>
             <div class="card">
-                <div class="card-title">🎒 CURRENT ASSET STORAGE</div>
-                <div id="asset-list-box" style="font-size: 13px; color: #e4e4e7; line-height: 1.6;">No military assets acquired yet.</div>
+                <div class="card-title">🎒 Inventory</div>
+                <div id="inv-box" style="font-size: 13px; color: #a1a1aa;">No weapons loaded.</div>
             </div>
         </section>
 
-        <!-- SCREEN 4: ISLAND EMPIRE / REVENUE LAUNDERING -->
+        <!-- SCREEN 4: LAUNDERING -->
         <section class="screen" id="screen-island">
             <div class="card">
-                <div class="card-title">🏝️ LEKKI & IKOYI CLEANING HUB</div>
-                <p style="font-size: 12px; color: #a1a1aa; margin-bottom: 12px;">Convert your raw dirty street cash into legitimate real estate or VVIP nightclub assets to lower your Heat points permanently.</p>
-                
-                <div class="card-value" style="color: var(--green);" id="clean-cash-box">₦0 Cleaned</div>
-                
-                <button class="btn" onclick="launderMoney()">
-                    <span>🏢 Invest in Ibeju Real Estate</span>
-                    <span>Clean ₦1M</span>
-                </button>
+                <div class="card-title">🏝️ Island Laundering</div>
+                <div class="card-value" style="color: #22c55e;" id="clean-box">₦0 Cleaned</div>
+                <button class="btn" onclick="cleanMoney()">🏢 Buy Ibeju Land (Clean ₦1M)</button>
             </div>
         </section>
 
     </div>
 
-    <!-- Bottom App Navigation Tab Bar -->
-    <nav class="nav-bar" id="main-nav" style="display: none;">
-        <div class="nav-item active" onclick="switchTab('mainland', this)">
-            <span class="nav-icon">🏢</span><span>Mainland</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('market', this)">
-            <span class="nav-icon">🛍️</span><span>Armory</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('island', this)">
-            <span class="nav-icon">🏝️</span><span>Island</span>
-        </div>
-        <div class="nav-item" onclick="alert('Leaderboard server processing real-time scores...')">
-            <span class="nav-icon">👑</span><span>Rankings</span>
-        </div>
+    <!-- Navigation Tab Bar -->
+    <nav class="nav-bar" id="main-nav">
+        <div class="nav-item active" id="tab-mainland" onclick="goTab('mainland')">🏢 Mainland</div>
+        <div class="nav-item" id="tab-market" onclick="goTab('market')">🛍️ Armory</div>
+        <div class="nav-item" id="tab-island" onclick="goTab('island')">🏝️ Island</div>
     </nav>
 
-    <!-- CLEAN SYNTAX NO-FAIL SCRIPT ENGINE -->
+    <!-- ROBUST SCRIPT ENGINE -->
     <script>
-        var gameState = {
-            profileType: "",
-            cash: 0,
-cleanCash: 0,
-heat: 0,
-streetCred: 10,
-assets: []
-};
-function initializeProfile(type) {
-gameState.profileType = type;
-gameState.cash = (type === 'NEPO') ? 5000000 : 50000;
-gameState.cleanCash = 0;
-gameState.heat = (type === 'NEPO') ? 30 : 0;
-gameState.streetCred = (type === 'NEPO') ? 0 : 25;
-// Force visibility toggle using standard inline rules to avoid display block drops
-document.getElementById('screen-onboarding').style.display = 'none';
-document.getElementById('main-hud').style.display = 'flex';
-document.getElementById('main-nav').style.display = 'grid';
-document.getElementById('screen-mainland').style.display = 'block';
-document.getElementById('screen-mainland').className = 'screen active';
-updateHUDMetrics();
-}
-function updateHUDMetrics() {
-document.getElementById('hud-cash').innerText = "₦" + gameState.cash.toLocaleString();
-document.getElementById('hud-heat').innerText = "⚠️ " + gameState.heat + "%";
-document.getElementById('clean-cash-box').innerText = "₦" + gameState.cleanCash.toLocaleString() + " Cleaned";
-var assetBox = document.getElementById('asset-list-box');
-if (gameState.assets.length > 0) {
-var listHtml = "";
-for (var i = 0; i < gameState.assets.length; i++) {
-listHtml += "✅ " + gameState.assets[i] + "
-";
-}
-assetBox.innerHTML = listHtml;
-}
-}
-function switchTab(screenId, element) {
-var screens = document.querySelectorAll('.screen');
-for (var i = 0; i < screens.length; i++) {
-screens[i].style.display = 'none';
-screens[i].className = 'screen';
-}
-var targetScreen = document.getElementById('screen-' + screenId);
-targetScreen.style.display = 'block';
-targetScreen.className = 'screen active';
-var items = document.querySelectorAll('.nav-item');
-for (var j = 0; j < items.length; j++) {
-items[j].className = 'nav-item';
-}
-element.className = 'nav-item active';
-}
-function executeHustle(type) {
-if (type === 'extort') {
-gameState.cash += 75000;
-gameState.heat = Math.min(100, gameState.heat + 2);
-alert("Tax collection complete! You taxed local market shops for ₦75,000 (+2% Heat).");
-updateHUDMetrics();
-} else if (type === 'smuggle') {
-var statusPanel = document.getElementById('current-zone-text');
-statusPanel.innerText = "🚨 Crossing bridge... checking local police logs...";
-fetch('/api/smuggle', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ playerId: '1' })
-})
-.then(function(res) { return res.json(); })
-.then(function(data) {
-if (data.success) {
-gameState.cash += 1200000;
-gameState.heat = Math.min(100, gameState.heat + 10);
-alert(data.message);
-} else {
-gameState.cash = Math.max(0, gameState.cash - 300000);
-gameState.heat = Math.min(100, gameState.heat + 20);
-alert(data.message + " You paid ₦300,000 in emergency bail handouts.");
-}
-statusPanel.innerText = "Mushin Under-The-Bridge";
-updateHUDMetrics();
-})
-.catch(function(err) {
-gameState.cash += 1200000;
-alert("Success! You slipped past the roadblock cargo terminal.");
-statusPanel.innerText = "Mushin Under-The-Bridge";
-updateHUDMetrics();
+        var playerMoney = 0;
+        var playerHeat = 0;
+        var playerClean = 0;
+        var playerAssets = [];
+
+        function startGame(profileType) {
+            // Assign starting stats
+            if (profileType === 'NEPO') {
+                playerMoney = 5000000;
+                playerHeat = 30;
+            } else {
+                playerMoney = 50000;
+                playerHeat = 0;
+            }
+
+            // Unhide game layers directly
+            document.getElementById('screen-onboarding').style.display = 'none';
+            document.getElementById('main-hud').style.display = 'flex';
+            document.getElementById('main-nav').style.display = 'grid';
+            
+            // Activate core screen view
+            document.getElementById('screen-mainland').style.display = 'block';
+            
+            refreshUI();
+        }
+
+        function refreshUI() {
+            document.getElementById('hud-cash').innerText = "₦" + playerMoney.toLocaleString();
+            document.getElementById('hud-heat').innerText = "⚠️ " + playerHeat + "%";
+            document.getElementById('clean-box').innerText = "₦" + playerClean.toLocaleString() + " Cleaned";
+
+            var invBox = document.getElementById('inv-box');
+            if (playerAssets.length > 0) {
+                invBox.innerText = playerAssets.join(', ');
+            }
+        }
+
+        function goTab(tabId) {
+            // Hide all gaming screens
+            document.getElementById('screen-mainland').style.display = 'none';
+            document.getElementById('screen-market').style.display = 'none';
+            document.getElementById('screen-island').style.display = 'none';
+
+            // Show active screen selection
+            document.getElementById('screen-' + tabId).style.display = 'block';
+
+            // Reset tab highlights
+            document.getElementById('tab-mainland').className = 'nav-item';
+            document.getElementById('tab-market').className = 'nav-item';
+            document.getElementById('tab-island').className = 'nav-item';
+            
+            document.getElementById('tab-' + tabId).className = 'nav-item active';
+        }
+
+        function runHustle(action) {
+            if (action === 'extort') {
+                playerMoney += 75000;
+                playerHeat = Math.min(100, playerHeat + 2);
+                alert("Market tax collected! +₦75,000");
+                refreshUI();
+            } else if (action === 'smuggle') {
+                var locLabel = document.getElementById('loc-text');
+                locLabel.innerText = "🚨 Driving across the Bridge...";
+
+                // Network tracking layout check
+                fetch('/api/smuggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerId: '1' })
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        playerMoney += 1200000;
+                        playerHeat = Math.min(100, playerHeat + 10);
+                        alert(data.message);
+                    } else {
+                        playerMoney = Math.max(0, playerMoney - 300000);
+                        playerHeat = Math.min(100, playerHeat + 20);
+                        alert(data.message + " Paid bail.");
+                    }
+                    locLabel.innerText = "Mushin Trenches";
+                    refreshUI();
+                })
+                .catch(function() {
+                    // Offline fallback simulation loop
+                    playerMoney += 1200000;
+playerHeat = Math.min(100, playerHeat + 10);
+alert("Bridge cleared safely! +₦1,200,000");
+locLabel.innerText = "Mushin Trenches";
+refreshUI();
 });
 }
 }
-function buyItem(itemId, cost) {
-if (gameState.cash < cost) {
-alert("Baga! You don't have enough street cash to complete this armory deal.");
+function buyWeapon(name) {
+if (playerMoney < 1200000) {
+alert("Baga! Not enough money.");
 return;
 }
-gameState.cash -= cost;
-var itemName = (itemId === 'ak47') ? "AK-47 Weaponry Crate" : "Armored Tinted SUV";
-gameState.assets.push(itemName);
-alert("Deal closed. You unlocked a " + itemName + " asset tag.");
-updateHUDMetrics();
+playerMoney -= 1200000;
+playerAssets.push(name);
+alert("Weapon locked in: " + name);
+refreshUI();
 }
-function launderMoney() {
-if (gameState.cash < 1000000) {
-alert("You need at least ₦1,000,000 dirty cash to clear banking documentation thresholds.");
+function cleanMoney() {
+if (playerMoney < 1000000) {
+alert("You need at least ₦1,000,000 to purchase Land.");
 return;
 }
-gameState.cash -= 1000000;
-gameState.cleanCash += 850000;
-gameState.heat = Math.max(0, gameState.heat - 15);
-alert("Money clean! Real estate contract filed. (-15% processing fee, -15% Police Eye Heat).");
-updateHUDMetrics();
+playerMoney -= 1000000;
+playerClean += 850000;
+playerHeat = Math.max(0, playerHeat - 15);
+alert("Transaction cleared! Capital laundered.");
+refreshUI();
 }
