@@ -233,9 +233,9 @@
         </div>
     </nav>
 
-    <!-- YOUR CORE LOGIC ENGINE STARTS HERE -->
+    <!-- CLEAN SYNTAX NO-FAIL SCRIPT ENGINE -->
     <script>
-        let gameState = {
+        var gameState = {
             profileType: "",
             cash: 0,
 cleanCash: 0,
@@ -244,55 +244,65 @@ streetCred: 10,
 assets: []
 };
 function initializeProfile(type) {
-    console.log("Profile clicked:", type); // This checks if the click works
-    gameState.profileType = type;
-    gameState.cash = type === 'NEPO' ? 5000000 : 50000;
-    gameState.cleanCash = 0;
-    gameState.heat = type === 'NEPO' ? 30 : 0;
-    gameState.streetCred = type === 'NEPO' ? 0 : 25;
-
-    // Force UI to show immediately without waiting for server responses
-    document.getElementById('screen-onboarding').style.display = 'none';
-    document.getElementById('main-hud').style.display = 'flex';
-    document.getElementById('main-nav').style.display = 'grid';
-    document.getElementById('screen-mainland').style.display = 'block';
-    document.getElementById('screen-mainland').classList.add('active');
-    
-    updateHUDMetrics();
+gameState.profileType = type;
+gameState.cash = (type === 'NEPO') ? 5000000 : 50000;
+gameState.cleanCash = 0;
+gameState.heat = (type === 'NEPO') ? 30 : 0;
+gameState.streetCred = (type === 'NEPO') ? 0 : 25;
+// Force visibility toggle using standard inline rules to avoid display block drops
+document.getElementById('screen-onboarding').style.display = 'none';
+document.getElementById('main-hud').style.display = 'flex';
+document.getElementById('main-nav').style.display = 'grid';
+document.getElementById('screen-mainland').style.display = 'block';
+document.getElementById('screen-mainland').className = 'screen active';
+updateHUDMetrics();
 }
 function updateHUDMetrics() {
 document.getElementById('hud-cash').innerText = "₦" + gameState.cash.toLocaleString();
 document.getElementById('hud-heat').innerText = "⚠️ " + gameState.heat + "%";
 document.getElementById('clean-cash-box').innerText = "₦" + gameState.cleanCash.toLocaleString() + " Cleaned";
-const assetBox = document.getElementById('asset-list-box');
-if(gameState.assets.length > 0) {
-assetBox.innerHTML = gameState.assets.map(item => ✅ ${item}).join('
-');
+var assetBox = document.getElementById('asset-list-box');
+if (gameState.assets.length > 0) {
+var listHtml = "";
+for (var i = 0; i < gameState.assets.length; i++) {
+listHtml += "✅ " + gameState.assets[i] + "
+";
+}
+assetBox.innerHTML = listHtml;
 }
 }
 function switchTab(screenId, element) {
-document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-document.getElementById('screen-' + screenId).classList.add('active');
-document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-element.classList.add('active');
+var screens = document.querySelectorAll('.screen');
+for (var i = 0; i < screens.length; i++) {
+screens[i].style.display = 'none';
+screens[i].className = 'screen';
 }
-async function executeHustle(type) {
+var targetScreen = document.getElementById('screen-' + screenId);
+targetScreen.style.display = 'block';
+targetScreen.className = 'screen active';
+var items = document.querySelectorAll('.nav-item');
+for (var j = 0; j < items.length; j++) {
+items[j].className = 'nav-item';
+}
+element.className = 'nav-item active';
+}
+function executeHustle(type) {
 if (type === 'extort') {
 gameState.cash += 75000;
 gameState.heat = Math.min(100, gameState.heat + 2);
 alert("Tax collection complete! You taxed local market shops for ₦75,000 (+2% Heat).");
 updateHUDMetrics();
 } else if (type === 'smuggle') {
-const statusPanel = document.getElementById('current-zone-text');
+var statusPanel = document.getElementById('current-zone-text');
 statusPanel.innerText = "🚨 Crossing bridge... checking local police logs...";
-try {
-const res = await fetch('/api/smuggle', {
+fetch('/api/smuggle', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ playerId: '1' })
-});
-const data = await res.json();
-if(data.success) {
+})
+.then(function(res) { return res.json(); })
+.then(function(data) {
+if (data.success) {
 gameState.cash += 1200000;
 gameState.heat = Math.min(100, gameState.heat + 10);
 alert(data.message);
@@ -301,12 +311,15 @@ gameState.cash = Math.max(0, gameState.cash - 300000);
 gameState.heat = Math.min(100, gameState.heat + 20);
 alert(data.message + " You paid ₦300,000 in emergency bail handouts.");
 }
-} catch(err) {
-gameState.cash += 1200000;
-alert("Success! You slipped past the roadblock cargo terminal.");
-}
 statusPanel.innerText = "Mushin Under-The-Bridge";
 updateHUDMetrics();
+})
+.catch(function(err) {
+gameState.cash += 1200000;
+alert("Success! You slipped past the roadblock cargo terminal.");
+statusPanel.innerText = "Mushin Under-The-Bridge";
+updateHUDMetrics();
+});
 }
 }
 function buyItem(itemId, cost) {
@@ -315,9 +328,9 @@ alert("Baga! You don't have enough street cash to complete this armory deal.");
 return;
 }
 gameState.cash -= cost;
-const itemName = itemId === 'ak47' ? "AK-47 Weaponry Crate" : "Armored Tinted SUV";
+var itemName = (itemId === 'ak47') ? "AK-47 Weaponry Crate" : "Armored Tinted SUV";
 gameState.assets.push(itemName);
-alert(Deal closed. You unlocked a ${itemName} asset tag.);
+alert("Deal closed. You unlocked a " + itemName + " asset tag.");
 updateHUDMetrics();
 }
 function launderMoney() {
